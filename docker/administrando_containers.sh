@@ -49,4 +49,47 @@ docker container exec -ti 883843f3c0d6 ls /usr/share/nginx
 
 docker container exec -ti 883843f3c0d6 bash
 
-docker pause?
+#Para o container:
+docker container stop ID/Nome
+
+#Starta o container:
+docker container start ID/Nome
+
+#Restart:
+docker container restart ID/Nome
+
+#Verificar detalhes da imagem:
+docker container inspect ID/Nome
+
+#Pausar a exec. do container:
+docker pause ID/Nome
+
+#Despausar a exec. do container:
+docker container unpause ID/Nome
+
+#[root@localhost ~]# docker container exec -it 883843f3c0d6 bash
+#root@883843f3c0d6:/# echo "Don't Panic" > /usr/share/nginx/html/index.html 
+#root@883843f3c0d6:/# exit
+#exit
+#[root@localhost ~]# curl 172.17.0.3
+#Don't Panic
+#[root@localhost ~]# docker container pause 883843f3c0d6
+#883843f3c0d6
+#[root@localhost ~]# curl 172.17.0.3
+#[root@localhost ~]# docker container unpause 883843f3c0d6
+#883843f3c0d6
+#[root@localhost ~]# curl 172.17.0.3
+#Don't Panic
+#[root@localhost ~]# 
+
+#Verificar log do container:
+docker container logs -f ID/Nome
+
+#Remover container:
+docker rm ID/Nome
+
+#Forcar remocao do container:
+docker rm -f ID/Nome
+
+#Remover container, primeros 3 caracteries sao suficientes:
+docker container rm 8c7
