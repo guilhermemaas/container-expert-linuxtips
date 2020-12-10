@@ -93,3 +93,25 @@ docker rm -f ID/Nome
 
 #Remover container, primeros 3 caracteries sao suficientes:
 docker container rm 8c7
+
+#========
+#IMAGES
+#========
+
+#listar imagens:
+docker image ls
+
+#Buildar imagem:
+docker image build -t toskeira:1.0 .
+#nome:versao dir
+#-t tag
+
+docker container run -d toskeira:1.0
+docker container logs -f 90b1f35a0fb1
+#stress: info: [6] dispatching hogs: 1 cpu, 0 io, 1 vm, 0 hdd
+docker container rm -f 90b1f35a0fb1
+docker container run -d -m 128M toskeira:1.0
+docker container update --cpus 0.2 f7acbd1644e7
+docker stats f7acbd1644e7
+#CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT   MEM %               NET I/O             BLOCK I/O           PIDS
+#f7acbd1644e7        beautiful_yalow     19.39%              54.9MiB / 128MiB    42.89%              3.3kB / 0B          0B / 0B             4
