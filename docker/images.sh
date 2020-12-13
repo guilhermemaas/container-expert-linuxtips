@@ -71,3 +71,5 @@ docker container logs -f bc24bbd63203
 
 #Somente o root tem permissao de Bindar uma porta baixa, 80.
 
+$ docker container run -ti meu_go:1.0
+Giropops Strigus Girus.
