@@ -159,3 +159,8 @@ docker container run -ti ubuntu_vim_curl:1.0
 
 #root@7b0c0497f0d6:/# cat /etc/issue
 #GIROPOPS STRIGUS GIRUS
+
+docker image prune
+#Limpa as imagens full none.
+
+docker image tag d6ccb7f102be gmaas2/ubuntu_vim_curl:6.0.0
