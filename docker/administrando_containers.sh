@@ -115,3 +115,6 @@ docker container update --cpus 0.2 f7acbd1644e7
 docker stats f7acbd1644e7
 #CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT   MEM %               NET I/O             BLOCK I/O           PIDS
 #f7acbd1644e7        beautiful_yalow     19.39%              54.9MiB / 128MiB    42.89%              3.3kB / 0B          0B / 0B             4
+
+#Remover todos os containers:
+docker container rm -f $(docker ps -q)
