@@ -53,6 +53,7 @@ docker node rm ID
 docker node demote nome ou ID
 
 #Definir o IP na criação do cluster, por onde vai se comunicar:
+#Caso tenha mais de uma placa de rede
 docker swarm init --advertise-addr 192.168.0.1
 
 #Regerar o comando de join no Manager, com o token:

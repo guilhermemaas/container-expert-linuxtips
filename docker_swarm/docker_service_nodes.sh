@@ -65,7 +65,7 @@ Commands:
 #direcionar para a 80 nos containers.
 #Mesmo que o service só tenha sido configurado para replicar em um node.
 
-docker service create --name giropops -3 -p 8080:80
+docker service create --name giropops --replicas 3 -p 8080:80 nginx
 
 docker service ls
 #ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
@@ -110,7 +110,7 @@ Ports:
 #Escalar para 10 giropops
 docker service scale giropops=10
 
-[root@localhost ~]# docker service scale giropops=10
+docker service scale giropops=10
 giropops scaled to 10
 overall progress: 10 out of 10 tasks 
 1/10: running   [==================================================>] 
@@ -125,3 +125,216 @@ overall progress: 10 out of 10 tasks
 10/10: running   [==================================================>] 
 verify: Service converged 
 
+#Verificar logs de um serviço:
+docker service logs -f giropops
+giropops.7.4kejzhv0zo9a@ilha-nublar01     | 10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+giropops.7.4kejzhv0zo9a@ilha-nublar01     | 10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+giropops.7.4kejzhv0zo9a@ilha-nublar01     | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+giropops.7.4kejzhv0zo9a@ilha-nublar01     | /docker-entrypoint.sh: Configuration complete; ready for start up
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | 10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | 10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+giropops.3.wdo0rvd2wzql@ilha-nublar01     | /docker-entrypoint.sh: Configuration complete; ready for start up
+
+#Curl de dentro do node ilha-nublar02 para o IP do node ilha-nublar03:
+curl 192.168.0.117:8080
+giropops.10.v58k53tf7ewy@ilha-nublar03    | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+giropops.10.v58k53tf7ewy@ilha-nublar03    | /docker-entrypoint.sh: Configuration complete; ready for start up
+giropops.5.pb6iw5fpg894@ilha-nublar01     | 10.0.0.5 - - [21/Dec/2020:07:48:49 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+
+
+#=================
+#SERVICE VOLUME:
+#=================
+
+####LAB
+docker volume create giropops
+cd /var/lib/docker/volumes/giropops/_data/
+vim index.html
+
+docker service create --name giropops --replicas 3 -p 8080:80 --mount type=volume,src=giropops,dst=/usr/share/nginx/html/ nginx
+
+docker service logs -f giropops
+giropops.1.l553rasv7tck@ilha-nublar02    | 10.0.0.2 - - [23/Dec/2020:17:47:28 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.3.6lwpu8dgp21x@ilha-nublar03    | 10.0.0.2 - - [23/Dec/2020:01:45:35 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.2.l1dacb52ekk3@ilha-nublar01    | 10.0.0.2 - - [21/Dec/2020:08:04:05 +0000] "GET / HTTP/1.1" 200 28 "-" "curl/7.61.1" "-"
+giropops.1.l553rasv7tck@ilha-nublar02    | 10.0.0.2 - - [23/Dec/2020:17:47:33 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.3.6lwpu8dgp21x@ilha-nublar03    | 10.0.0.2 - - [23/Dec/2020:01:45:37 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.2.l1dacb52ekk3@ilha-nublar01    | 10.0.0.2 - - [21/Dec/2020:08:04:07 +0000] "GET / HTTP/1.1" 200 28 "-" "curl/7.61.1" "-"
+giropops.1.l553rasv7tck@ilha-nublar02    | 10.0.0.2 - - [23/Dec/2020:17:47:34 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.3.6lwpu8dgp21x@ilha-nublar03    | 10.0.0.2 - - [23/Dec/2020:01:45:39 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.2.l1dacb52ekk3@ilha-nublar01    | 10.0.0.2 - - [21/Dec/2020:08:04:08 +0000] "GET / HTTP/1.1" 200 28 "-" "curl/7.61.1" "-"
+giropops.1.l553rasv7tck@ilha-nublar02    | 10.0.0.2 - - [23/Dec/2020:17:47:36 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+giropops.3.6lwpu8dgp21x@ilha-nublar03    | 10.0.0.2 - - [23/Dec/2020:01:45:41 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.61.1" "-"
+
+#Curl de um dos nós, hora bate em um nó com o index.html padrão, outra hora no nó que possui o volume com index.html modificado:
+#STRIGUS GIRUS XPTO:
+
+[root@ilha-nublar03 ~]# curl 192.168.0.110:8080
+GIROPOPS STRIGUS GIRUS 2.0.
+
+[root@ilha-nublar03 ~]# curl 192.168.0.110:8080                                                                                                           
+<!DOCTYPE html>                                                                                                                                           
+<html>                                                                                                                                                    
+<head>                                                                                                                                                    
+<title>Welcome to nginx!</title>                                                                                                                          
+<style>                                                                                                                                                   
+    body {                                                                                                                                                
+        width: 35em;                                                                                                                                      
+        margin: 0 auto;                                                                                                                                   
+        font-family: Tahoma, Verdana, Arial, sans-serif;  
+
+#SERVIDOR NFS para compartilhar um dir como volume nos nodes:
+#No Server NFS:
+apt install nfs-server
+vim /etc/exports
+/opt/site *(rw,sync,subtree_check)
+mkdir -p /opt/site/_data
+echo "GIROPOPS STRIGUS GIRUS" > /opt/site/_data/index.html
+docker volume create giropops
+rm -rf /var/lib/docker/volumes/giropops/_data/
+ln -s /opt/site/_data/ /var/lib/docker/volumes/giropops/
+exportfs -ar
+#No Client NFS, ou seja, nos nodes swarm:
+apt install nfs-common
+showmount -e IP
+mount IP:/opt/site /var/lib/docker/volumes/giropops
+#Criar o service:
+docker service create --name giropops --replicas 3 -p 8080:80 --mount type=volume,src=giropops,dst=/usr/share/nginx/html nginx
+
+#LAB TESTE - Nesse caso temos o nfs montado em 2 dos 3 nodes, assim ao chamar 2 em 3 retorna a index do volume:
+[root@ilha-nublar03 _data]# curl 192.168.0.117:8080
+GIROPOPS STRIGUS GIRUS
+[root@ilha-nublar03 _data]# curl 192.168.0.117:8080
+GIROPOPS STRIGUS GIRUS
+[root@ilha-nublar03 _data]# curl 192.168.0.117:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+[root@ilha-nublar03 _data]# 
+
+
+#=================
+#SERVICE NETWORK:
+#=================
+
+docker service update --help
+
+Options:
+      --blkio-weight uint16        Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)
+      --cpu-period int             Limit CPU CFS (Completely Fair Scheduler) period
+      --cpu-quota int              Limit CPU CFS (Completely Fair Scheduler) quota
+      --cpu-rt-period int          Limit the CPU real-time period in microseconds
+      --cpu-rt-runtime int         Limit the CPU real-time runtime in microseconds
+  -c, --cpu-shares int             CPU shares (relative weight)
+      --cpus decimal               Number of CPUs
+      --cpuset-cpus string         CPUs in which to allow execution (0-3, 0,1)
+      --cpuset-mems string         MEMs in which to allow execution (0-3, 0,1)
+      --kernel-memory bytes        Kernel memory limit
+  -m, --memory bytes               Memory limit
+      --memory-reservation bytes   Memory soft limit
+      --memory-swap bytes          Swap limit equal to memory plus swap: '-1' to enable unlimited swap
+      --pids-limit int             Tune container pids limit (set -1 for unlimited)
+      --restart string             Restart policy to apply when a container exits
+
+
+#docker service create, outras opções:
+docker service create --name giropops --replicas 3 -p 8080:80 --mount type=volume,src=giropops,dst=/usr/share/nginx/html --hostname xpto_name --limit-cpu 0.25 --limit-memory 64M --env curso=linuxtips --dns 8.8.8.8 nginx
+
+[root@ilha-nublar01 etc]# docker exec -ti 896645ffc8b4 bash
+root@xpto_name:/# 
+
+root@xpto_name:/# env | grep curso
+curso=linuxtips
+
+
+#Criando uma rede:
+docker network create -d overlay giropops
+docker network create -d overlay strigus
+#Overlay = Para Swarm, todos nessa rede consegue conversar entre si.
+
+#Criar 3 Servicos, 2 em uma rede, e um terceiro em outra
+docker service create --name nginx1 -p 8080:80 --network giropops nginx
+docker service create --name nginx2 -p 8880:80 --network giropops nginx
+#docker exec -ti ID bash
+#curl nginx1 ou nginx2
+#Resolve pelo nome do servico. Vai ficar caindo de forma distribuida as requisicoes entre os nodes, containers.
+root@2bac33fcda21:/# history
+    1  echo "GIROPOPS" > /usr/share/nginx/html/index.html
+    2  curl nginx1
+    3  curl nginx1
+    4  curl nginx1
+    5  curl nginx1
+    6  curl nginx1
+    7  curl nginx1
+    8  curl nginx1
+    9  curl nginx1
+   10  curl nginx1
+   11  curl nginx1
+   12  curl nginx1
+   13  curl nginx1
+   14  curl nginx1
+   15  curl nginx1
+   16  curl nginx1
+   17  curl nginx1
+   18  curl nginx1
+   19  curl nginx1
+   20  curl nginx1
+   21  history
+
+docker service create --name nginx3 -p 8980:80 --network strigus nginx
+
+#Adicionar uma rede existente a um servico, para que os containers possam se comunicar com essa rede.
+docker service update --network-add strigus nginx1
+[root@ilha-nublar01 etc]# docker service update --network-add strigus nginx1
+nginx1
+overall progress: 10 out of 10 tasks 
+1/10: running   [==================================================>] 
+2/10: running   [==================================================>] 
+3/10: running   [==================================================>] 
+4/10: running   [==================================================>] 
+5/10: running   [==================================================>] 
+6/10: running   [==================================================>] 
+7/10: running   [==================================================>] 
+8/10: running   [==================================================>] 
+9/10: running   [==================================================>] 
+10/10: running   [==================================================>] 
+verify: Service converged 
+
+root@ae0175e5e996:/# history
+    1  curl strigus
+    2  clear
+    3  curl nginx1
+    4  curl nginx2
+    5  curl nginx3
+
+#Adicionar uma porta com update em um service:
+docker service update --publish-add 9090:9090
+
+#Para visualizar as configs da netowrk
+docker network inspect strigus
