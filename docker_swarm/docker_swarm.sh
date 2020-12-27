@@ -60,7 +60,7 @@ docker swarm init --advertise-addr 192.168.0.1
 docker swarm join-token worker
 
 
-#Gerar um token para se conectar como manager.
+#Gerar um token para se conectar como manager(Para um worker: docker swarm join-token worker).
 docker swarm join-token manager
 To add a manager to this swarm, run the following command:
 
