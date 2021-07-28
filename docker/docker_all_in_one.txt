@@ -1,0 +1,81 @@
+============================================================
+Administrando containers:
+============================================================
+#Dar permissão para o usuário executar o docker sem ser root:
+sudo usermod -aG docker your-user
+
+#terminal, interatividade
+docker run -ti ubuntu
+
+#versao redhat/centos:
+docker run -ti centos
+cat /etc/redhat-release
+
+#sair do container sem finalizar o processo:
+CTRL+PQ
+
+#voltar pro container em execucao:
+docker container attach
+
+Entrypoint = PID/PROCESSO rodando em Foreground(primeiro plano), não em background/daemon.
+
+#rodar como daemon:
+docker container run -d nginx
+
+#executar comandos no container sem impactar no entrypoint:
+docker container exec -ti ID ls /
+docker container exec -ti ID bash
+
+#parar:
+docker container stop
+
+#exibir todos:
+docker container ls -a
+
+#Iniciar novamente o container:
+docker container start 
+
+#verificar todos os detalhes do container:
+docker inspect ID
+
+#alterar o html da index do nginx:
+docker container exec -ti ID bash
+    echo "GIROPOPS STRIGUS GIRUS" > /usr/share/nginx/html/index.html
+    exit
+docker inspect | grep IPAddress
+curl 172.17.04
+
+#pausar um container:
+docker pause ID
+
+#despausar um container:
+docker unpause ID
+
+#verificar os logs do container:
+docker logs -f ID
+
+#excluir com force:
+docker container rm -f ID
+
+#ver o quanto de recursos da maquina o container esta utilizando:
+docker container stats ID
+
+#simular requests no container do nginx:
+while true; do curl 172.17.0.4; done
+
+#simular ums tress no container:
+    apt update && apt install stress
+    stress --cpu 1 --vm-bytes 128M --vm 1
+
+#verificar processos rodando dentro do container:
+docker container top ID
+
+#definir memoria na execucao do container:
+docker container run -d -m 128M nginx
+
+#definir quantos cores o container pode usar:
+docker container run -d -m 128M --cpus 0.5 nginx
+
+#update dos hardwares do container em execucao:
+docker container update --cpus 0.2 ID 
+#20% de um core

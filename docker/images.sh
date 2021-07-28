@@ -43,7 +43,7 @@ ADD:
 Como o COPY ele copia para dentro. Porém arquivos TAR ele desempacota, e arquivos da internet
 ele baixa no local alvo.
 
-#Define um usuárui para rodar:
+#Define um usuário para rodar:
 USER www-data
 
 #Diretório padrão do container:

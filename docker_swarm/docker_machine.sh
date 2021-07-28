@@ -59,6 +59,7 @@ docker-machine stop giropops
 #Inicia a instância, node:
 docker-machine start giropops
 
+
 docker-machine env -u
  $ docker-machine env -u
 unset DOCKER_TLS_VERIFY
