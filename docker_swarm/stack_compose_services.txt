@@ -1,0 +1,103 @@
+==============================================
+Compose/Stack:
+==============================================
+
+===================
+Portas pro Swarm:
+2377 TCP - Administracao Swarm
+7946 TCP/UDP - Comunicacao entre containers
+4789 UDP - Rede Overlay
+===================
+
+
+#Escalar mais replicas de um service:
+docker service scale webserver=10
+
+
+Compatibilidade - Compose x Engine:
+https://docs.docker.com/compose/compose-file/compose-file-v3/
+
+
+resources:
+    cpus: "0.1" -> 10% de um Core.
+    memory: 50M
+
+
+Fazer deploy de uma stack, de um compose-file:
+docker stack deploy -c docker-compose.yml nginx_compose1
+
+
+docker stack rm xpto -> remove a rede e a stack.
+
+docker stack services xpto
+
+docker stack ls -> lista as stacks.
+
+
+Stack:
+    Service:
+        Container
+        Container
+        Container
+    Service:
+        Container
+
+------------------------------------------------
+Deploy Wordpress:
+------------------------------------------------
+
+deploy stack deploy -c docker-compose.yml wordpress
+
+Creating network wordpress_default
+Creating service wordpress_db
+Creating service wordpress_wordpress
+
+docker service logs db
+u: strigus
+p: giropops@#1234
+
+
+==========> DICAS IMPORTANTES:
+volumes:
+- "/var/run/docker.sock:/var/run/docker.sock"
+-> Processo do docker, caso o container precise ter acesso as informações dos containers, como volumes.
+---
+
+deploy:
+    placement:
+        constraints:
+        - node.labels.dc == UK
+-> O serviço só vai subir com os nodes com essa label.
+---
+
+deploy:
+    placement:
+        constraints: [node.role == manager]
+-> A replica do serviço só vai rodar em nós managers.
+
+Adicionar label no node(Tagear):
+docker node update --label-add osm=osrm
+
+Remover Label:
+docker node update --label-rm osm saas-docker1
+
+---
+deploy:
+    replicas: 2
+    update_config:
+        parallelism: 1
+        delay: 10s
+-> Quando rodar um update em um service, vai aplicar 1 container por vez, com delay de 10s.
+
+---
+
+deploy:
+    mode: replicated
+-> replicated: Podemos definir a quantidade de replicas.
+-> global: vai subir uma replica por node. É bom para container sidecar, tipo Prometheus.
+
+
+---
+
+stop_grace_period: 1m30s
+-> Vai mandar um sigkill em 1m e meio, caso não suba. Pra matar forçadamente.

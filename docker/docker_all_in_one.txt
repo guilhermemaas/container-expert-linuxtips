@@ -79,3 +79,181 @@ docker container run -d -m 128M --cpus 0.5 nginx
 #update dos hardwares do container em execucao:
 docker container update --cpus 0.2 ID 
 #20% de um core
+
+#verificar recursos utilizados pelo container:
+docker stats id
+
+#docker container prune. Remove containers parados.
+docker container prune
+
+#Bindar a porta:
+docker container run -ti -p 8080:80
+
+
+============================================================
+Gerenciando Volumes:
+============================================================
+Tipos:
+Bind - Mapeando um diretório disponível no so:
+docker container run -ti --mount type=bind,src=/opt/giropops,dst=/giropops debian
+
+Bind com volume read only:
+docker container run -ti --mount type=bind,src=/opt/giropops,dst=/giropops,ro debian
+
+Volume - diretório criado pelo Docker para o container:
+docker volume create giropops:
+/var/lib/docker/volumes/giropops/_data
+
+docker container run -ti --mount type=volume,src=giropops,dst=/giropops debian
+
+docker volume prune:
+Remove volumes que não estão sendo utilizados por um container
+
+Comando antigo pra vincular um diretorio na criacao:
+docker container create -v /opt/giropops/:/giropops --name dbdados debian
+
+============================================================
+Gerenciando imagens:
+============================================================
+
+#listar imagens
+docker image ls
+
+#buildar
+docker image build -t toskeira:1.0 .
+
+#buildar sem cache(apt, yum):
+docker image build --no-cache -t opa:1.0 .
+
+============================================================
+Docker File:
+============================================================
+
+RUN - Comandos em tempo de build.
+-> Cada RUN é uma camada ready-only.
+CMD - Comando em tempo de execução. - Somente 1. Quando subir o container.
+    CMD(Exec):
+        CMD ["giropops", "param1", "param2"]
+    CMD(Shell):
+        CMD giropops param1 param2
+
+-------------------------------------------------
+
+ENTRYPOINT [ "/usr/sbin/apachectl" ]
+ou
+Modo Shell:
+CMD /usr/sbin/apachectl -D FOREGROUND 
+
+o Entrypoint/CMD, precisa sempre estar rodando em primeiro plano.
+
+
+#Dá pra usar o Entrypoint + CMD(Nesse caso o CMD é somente parâmetro pro Entrypoint):
+    ENTRYPOINT ["giropops"]
+    CMD ["param1"]
+    CMD ["param2]
+
+
+ENTRYPOINT python start.py
+
+-------------------------------------------------
+
+#Rodar o container do apache.
+docker container run --name meu_apache -p 8080:80 meu_apache:2.0.0
+
+COPY: Somente copia arquivos.
+
+ADD:
+   - Copiar arquivos.
+   - Arquivos tar explodidos. Conteudo e nao o tar.
+   - Arquivos remotos: www.site.com/xpto.sh
+
+
+===Dockerignore
+.dockerignore = .gitignore
+
+-------------------------------------------------
+
+ENV app_dirt /opt/app_
+WORKDIR ${app_dir}
+ADD . $app_dir
+
+
+-------------------------------------------------
+
+LABEL "com.example.vendor"="LINUXtips"
+LABEL "com.example.label-with-value"="VAI"
+LABEL version="1.0"
+LABEL description="Aqui vc pode \
+usar multi-line :D"
+
+
+-------------------------------------------------
+
+COPY ./app
+COPY dir1 /app 
+COPY file /app 
+
+ADD . /app
+ADD opa.tar /app 
+ADD htt://abc.com/arquivo /app
+
+-------------------------------------------------
+
+ARGS:
+
+FROM ubuntu
+ARG CONT_IMG_VER
+ENV CONT_IMG_VER v.1.0.0
+RUN echo $CONT_IMG_VER
+
+(shell-exemplo):
+$docker build --build-arg 
+CONT_IMG_VER=v2.0.0 Dockerfile
+
+-------------------------------------------------
+
+HEALTHCHECK --interval=5m --timeout=3s \
+CMD curl -f http://localhost || exit 1
+
+(Vai executar o curl, se der erro, exit.)
+
+============================================================
+Portainer:
+============================================================
+
+docker volume create portainer portainer_data
+
+docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+gitlab-rake "gitlab:password:reset[root]"
+
+
+============================================================
+Docker Commit:
+============================================================
+docker container exec -it xpto bash
+apt install curl vim
+CTRL+P+Q
+docker commit -m "ubuntu com vim e curl" xpto
+
+
+============================================================
+Docker Hub:
+============================================================
+
+docker image tag xpto gmaas2/apache-healthcheck:2.0.0
+docker login
+docker pull/push
+docker push gmaas2/apache2-healthcheck:2.0.0
+docker container run -d gmaas2/apache2-healthcheck:2.0.0
+docker logout
+
+============================================================
+Registry local:
+============================================================
+docker container run -d -p 5999:5000 --restart=always --name registry registry:2
+docker image tag 995 localhost:5999/apache2-healthcheck:2.0.0
+docker image push localhost:5999/apache2-healthcheck:2.0.0
+curl localhost:5999/v2/_catalog
+curl localhost:5999/v2/apache2-healthcheck/tags/list
+

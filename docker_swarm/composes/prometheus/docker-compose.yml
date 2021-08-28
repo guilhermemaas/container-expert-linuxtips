@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+    prometheus:
+        image: linuxtips/prometheus_alpine
+        volumes:
+            - ./conf/prometheus/:/etc/prometheus/
+            - prometheus_data:/var/lib/prometheus
+        networks:
+            - backend
+        ports:
+            - 9090:9090
+    
+    node-exporter:
+        image: linuxtips/node-exporter_alpine
+        hostname: '{{.Node.ID}}'
+        volumes:
+            - /proc:/usr/proc
+            - /sys:/usr/sys
+            - /:/rootfs
+        deploy:
+            mode: global
+        networks:
+            - backend
+        ports:
+            - 9100:9100
+    
+networks:
+    frontend:
+    backend:
+volumes:
+    prometheus_data:
+    grafana_data:
+    rocket_uploads:
+    mongodb_data:

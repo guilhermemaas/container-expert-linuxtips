@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+    apache:
+        image: nginx:latest
+        networks:
+            - traefik-public
+        deploy:
+            labels:
+                - "traefik.enable=true"
+                - 'traefik.http.routers.apache.rule=Host("apache.biqueiranerd.com.br")'
+                - "traefik.http.routers.apache.entrypoints=web"
+                - "traefik.http.services.apache.loadbalancer.server.port=80"
+        ports:
+            - 9494:80
+networks:
+    traefik-public:
+        external: true

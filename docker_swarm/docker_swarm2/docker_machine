@@ -1,0 +1,18 @@
+#Instalar docker-machine:
+https://docs.docker.com/machine/drivers/virtualbox/
+https://docs.docker.com/machine/install-machine/
+
+#Criar docker machine VirtualBox:
+docker-machine create --driver=virtualbox swarm1
+
+#Listar Docker machines:
+docker-machine ls
+
+#Ver configuracao das Docker machines:
+docker-machine env swarm1
+
+#Setar o cli para uma dockermachine
+$(docker-machine env swarm1)
+
+#Unset cli:
+docker-machine env -u

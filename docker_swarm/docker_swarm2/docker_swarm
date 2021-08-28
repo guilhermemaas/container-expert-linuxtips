@@ -1,0 +1,126 @@
+Cluster Swarm:
+Minimo 3 nodes Managers. 51% dos nodes managers. 3 Managers, cai 2, 66% UP.
+
+Quando cai um manager, existe uma eleicao para o novo manager ativo no momento.
+
+3 - cai 1 ok.
+5 - cai 2 ok.
+
+=====================================
+
+Install Docker:
+curl -fsSL https://get.docker.com | bash
+
+=====================================
+SWARM INIT:
+=====================================
+
+Iniciar:
+QUANDO POSSUI MAIS DE UMA INTERFACE DE REDE:
+docker swarm init --advertise-addr 192.168.99.105
+
+Join:
+docker swarm join --token SWMTKN-1-61trp2xe79qhew5wq81m3a1d9g5cq33qitjls1vx31bpjatljx-4bfwokv5pm3lhcgg2h4mjtb6z 192.168.99.105:2377
+
+Token Worker:
+docker swarm join-token worker
+
+Token Manager:
+docker swarm join-token manager
+
+Promover um node para manager:
+docker node promote node_name
+
+Tirar a eleicao de manager de um node:
+docker node demote node_name
+
+
+=====================================
+NODE RM
+=====================================
+Apagar um node:
+docker node rm
+docker node rm --force (Manager)
+
+
+=====================================
+NODE UPDATE
+=====================================
+Controlar "Availability" - disponibilidade de um node:
+
+PAUSE = nao aceita novos containers
+docker node update --availability pause swarm2
+
+DRAIN = remove replicas do containers
+docker node update --availability drain swarm2
+
+
+=====================================
+SERVICE CREATE
+=====================================
+
+docker service create --name webserver --replicas 10 -p 8080:80 nginx
+
+Ver onde estao rodando as replicas do servico:
+docker service ps webserver
+
+docker service create --name giropops --replicas 3 -p 8080:80
+
+docker service inspect giropops --pretty
+
+
+docker service create --name giropops2 --replicas 3 -p 9494:80 --mount type=volume,src=giropops,dst=/usr/share/nginx/html --hostname xpto --limit-cpu 0.25 --limit-memory 64M --env jeferson=lindo --dns 8.8.8.8 nginx
+
+
+=====================================
+SERVICE SCALE
+=====================================
+
+docker service scale webserver=10
+
+
+=====================================
+SERVICE VOLUMES
+=====================================
+
+docker volume create giropops
+cd /var/lib/docker/volumes/giropops/_data/
+echo "GIROPOPS STRIGUS GIROS" > index.html
+
+docker service rm giropops
+docker service create --name giropops --replicas 3 -p 8181:80 --mount type=volume,src=giropops,dst=/usr/share/nginx/html/ nginx
+
+
+=====================================
+NETWORK
+=====================================
+
+docker network create -d overlay giropops
+-d = driver 
+
+OVERLAY = Network para Swarm
+
+curl nome_servico = dns interno.
+
+OBS.: REDES OVERLAY NAO SE COMUNICAM.
+
+docker service update --publish-add 
+
+docker network create -d overlay strigus 
+docker service update --network-add strigus nginx1
+
+
+=====================================
+SECRETS
+=====================================
+
+echo "GIROPOPS STRIGUS GIRUS" | docker secreate create jeferson -
+docker secret ls
+cat /run/secret
+
+docker service update --secret-rm 
+docker service update --secret-add jeferson3
+
+Escolher o nome do secret dentro do container:
+docker service create --name nginx_xyz -p 8081:80 --secret src=jeferson-arquivo,target=meu-secret,uid=200,gid=200,mode=0400
+

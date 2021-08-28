@@ -1,0 +1,11 @@
+#Criar rede publica, modo overlay:
+docker network create --driver=overlay traefik-public
+
+docker stack deploy -c docker-compose traefik
+
+docker stack deploy -c app.yml app
+
+
+
+======= OSRM SWARM
+docker network create --driver=overlay traefik-public
