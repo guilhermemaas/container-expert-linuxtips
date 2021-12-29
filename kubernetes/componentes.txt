@@ -42,8 +42,24 @@ Service:
 Node Port - Subir um service pra fazer um binding de uma porta externa e o pod interno.
 
 ========================================================================================================================
+Camadas:
+
+Ingress
+    Service
+        Controller -> Deployment
+            Replica7
+                Pods
+                    Container App
+                    Container sidecar
+                    Container Metricas
 
 ========================================================================================================================
+Pacotes que podem ser instalados instalados em um nó:
+kubeadm -> Vai formar, criar o cluster.
+
+kubelet -> Agent que vai conversar com a API do master.
+
+kubectl -> Cli do Kubernetes.
 
 ========================================================================================================================
 

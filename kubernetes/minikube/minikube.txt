@@ -1,0 +1,26 @@
+#Documentação:
+#https://minikube.sigs.k8s.io/docs/start/
+
+#Set Driver:
+#https://minikube.sigs.k8s.io/docs/drivers/virtualbox/
+
+#Startando cluster com Virtualbox:
+minikube start --driver=virtualbox
+
+#Definindo como padrão o driver do Virtualbox:
+minikube config set driver virtualbox
+
+#ip
+minikube ip 
+
+#Conectar ssh:
+minikube ssh
+
+# minikube start
+# kubectl get nodes
+# minikube ip
+# minikube ssh 
+# minikube start
+# minikube stop
+# minikube dashboard
+# minikube logs

@@ -1,0 +1,111 @@
+#Instalar o docker:
+curl -fsSL https://get.docker.com | bash
+
+#Configuração do Runtime utilizado o Docker para rodar os containers.
+#vim/etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}
+#Cgroup Driver = Systemd
+
+mkdir -p /etc/systemd/system/docker.service.d
+mkdir -p /etc/systemd/system/docker.service.d
+mkdir -p /etc/systemd/system/docker.service.d
+
+===
+
+systemctl daemon-reload
+systemctl restart docker
+
+docker info | grep -i cgroup
+ Cgroup Driver: systemd
+ Cgroup Version: 1
+WARNING: No swap limit support
+root@kubernetes3:/home/gmaas#
+
+===
+Instalação do Kubernetes (https://livro.descomplicandokubernetes.com.br/pt/day_one/descomplicando_kubernetes.html#instala%C3%A7%C3%A3o-do-microk8s-no-gnulinux):
+sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+
+#Versão específica
+sudo apt-get install -y kubelet=1.9.3-00 kubeadm=1.9.3-00 kubectl=1.9.3-00
+
+#Última versão do Kubernetes:
+apt-get install -y kubelet kubeadm kubectl
+
+#Debian, validar versões disponíveis:
+apt list -a kubelet, ou kubeadm ou kubectl
+
+===
+Baixar as imagens necessárias para criação e administração do cluster:
+kubeadm config images pull
+
+===
+Join no cluster (Exemplo):
+kubeadm join 192.168.1.100:6443 --token 9og9xg.uqwgtjir5otc1eus \
+	--discovery-token-ca-cert-hash sha256:ffcf917f2e12f8954038981a1359e8e04175a02a623b817fb0f9f0681471a9ea
+
+####
+####Após iniciar o cluster (kubeadm init) são apresentadas as seguintes mensagens ao final do log:
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.1.100:6443 --token 9og9xg.uqwgtjir5otc1eus \
+	--discovery-token-ca-cert-hash sha256:ffcf917f2e12f8954038981a1359e8e04175a02a623b817fb0f9f0681471a9ea 
+
+
+###Ativar modulos do Kernel Linux:
+sudo modprobe br_netfilter ip_vs_rr ip_vs_wrr ip_vs_sh nf_conntrack_ipv4 ip_vs
+#modprobe: program to add and remove modules from the Linux Kernel 
+#br_netfilter: This module is required to enable transparent masquerading and to facilitate Virtual Extensible LAN (VxLAN) traffic for communication between Kubernetes pods across the cluster.
+#ip_vs_rr: The robin-robin scheduling algorithm simply directs network connections to different real servers in a round-robin manner.
+#ip_vs_wrr: The weighted robin-robin scheduling algorithm directs network connections to different real servers based on server weights in a round-robin manner. Servers with higher weights receive new connections first than those with less weights, and servers with higher weights get more connections than those with less weights and servers with equal weights get equal connections.
+#ip_vs_sh: The source hashing scheduling algorithm assigns network connections to the servers through looking up a statically assigned hash table by their source IP addresses.
+#nf_conntrack_ipv4
+#ip_vs: IP Virtual Server support will let you build a high-performance virtual server based on cluster of two or more real servers. This option must be enabled for at least one of the clustered computers that will take care of intercepting incoming connections to a single IP address and scheduling them to real servers.
+Three request dispatching techniques are implemented, they are virtual server via NAT, virtual server via tunneling and virtual server via direct routing. 
+The several scheduling algorithms can be used to choose which server the connection is directed to, thus load balancing can be achieved among the servers. For more information and its administration program, please visit the following URL: http://www.linuxvirtualserver.org/.
+
+
+#######Instalando um add-on para Pod Network, nesse caso vai ser utilizado o Weave-net:
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+erviceaccount/weave-net created
+clusterrole.rbac.authorization.k8s.io/weave-net created
+clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+role.rbac.authorization.k8s.io/weave-net created
+rolebinding.rbac.authorization.k8s.io/weave-net created
+daemonset.apps/weave-net created
+

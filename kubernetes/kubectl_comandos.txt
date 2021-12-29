@@ -1,0 +1,14 @@
+#Listar os nodes:
+kubectl get nodes
+
+#Listar pods:
+kubectl get pods
+
+#Listar deployments:
+kubectl get deployment --all-namespaces
+
+NAMESPACE     NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   coredns   1/1     1            1           5m13s
+
+#Listar os pods do name space do Kubernetes (Interno):
+kubectl get pods -n kube-system
