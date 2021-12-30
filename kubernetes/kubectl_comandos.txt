@@ -12,3 +12,66 @@ kube-system   coredns   1/1     1            1           5m13s
 
 #Listar os pods do name space do Kubernetes (Interno):
 kubectl get pods -n kube-system
+
+#Listar os nos onde os pods estao rodando:
+kubectl get pods -n kube-system -o wide
+
+#Listar os detalhes de um node:
+kubectl describe nodes kubernetes2
+
+#Habilitar o auto complete dos comandos no kubectl
+apt install -y bash-completion
+kubectl completion bash
+kubectl completion bash > /etc/bash_completion.d/kubectl
+#Ativar sem abrir novamente o terminal:
+source <(kubectl completion bash)
+
+
+#######Pods
+kubectl describe pods -n kube-system 
+kubectl run nginx --image=nginx
+kubectl describe pods nginx
+#Ver o manifesto em formato yaml do pod
+kubectl get pods nginx -o yaml 
+#Remover pod:
+kubectl delete pods nginx
+
+#listar pods de todos os namespaces:
+kubectl get pods --all-namespaces
+
+
+#######Namespaces
+kubectl get namespaces
+
+#Criar um namespace
+
+
+#######Run
+kubectl run nginx --image=nginx
+kubectl describe pods nginx
+
+#Fazer um fake "dry-run" de um pod pra pegar a estrutura pra criar um pod:
+kubectl run nginx --image=nginx --dry-run=cliente -o yaml
+root@kubernetes1:/home/gmaas# kubectl run nginx --image=nginx --dry-run=client -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+######create
+kubectl create -f hello_world.yaml
+kubectl get nodes -n giropops
+
+
