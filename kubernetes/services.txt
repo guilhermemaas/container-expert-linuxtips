@@ -1,0 +1,44 @@
+#Expose
+kubectl expose pod nginx --port 80
+#Cria um service 
+
+
+######Services:
+kubectl get service
+
+oot@kubernetes1:/home/gmaas# kubectl get service
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP   28h
+nginx        ClusterIP   10.107.17.27   <none>        80/TCP    52s
+root@kubernetes1:/home/gmaas# curl 10.107.17.27
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+
+kubectl dscribe services nginx
+
+####Endpoints
+kubectl get endpoints
+root@kubernetes1:/home/gmaas# kubectl get endpoints
+NAME         ENDPOINTS            AGE
+kubernetes   192.168.1.100:6443   29h
+nginx        10.44.0.1:80         5m17s
+
+
+#####Services
+#Service do tipo Nodeport (Exporta o service em uma porta alta, se bater em qualquer node nessa porta ira responder):
+
+#Editar um servico:
+kubectl edit service nginx
+    Alterar o type de ClusterIP para NodePort
+kubectl get service
+root@kubernetes1:/home/gmaas# kubectl get services
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        29h
+nginx        NodePort    10.107.17.27   <none>        80:31314/TCP   12m
+
+kubectl delete service nginx
+
+###Documentacao
+kubectl explain services

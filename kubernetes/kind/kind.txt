@@ -1,0 +1,29 @@
+#Instalação(Como root):
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-darwin-amd64
+chmod +x ./kind
+mv ./kind /usr/bin/kind
+
+#Criar um cluster:
+kind create cluster --name giropops
+
+#Listar clusters:
+kind get clusters
+
+#kubectl listar informações dos clusters:
+root@gmaas:/tmp# kubectl cluster-info --context kind-giropops
+Kubernetes control plane is running at https://127.0.0.1:38693
+CoreDNS is running at https://127.0.0.1:38693/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+root@gmaas:/tmp# kubectl cluster-info --context kind-kind
+Kubernetes control plane is running at https://127.0.0.1:41101
+CoreDNS is running at https://127.0.0.1:41101/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+
+#Listar contextos:
+kubectl config get-contexts
+
+#Mudar o contexto(cluster) no kubectl:
+kubectl config use-context kind-kind

@@ -1,0 +1,22 @@
+#Criar um deployment a partir de um yaml:
+kubectl create -f giropops_deployment.yaml
+
+#Listar deployment:
+kubectl get deployment
+
+#Listar replicas:
+kubectl get delployment.apps
+
+#Remover um deploymento pelo arquivo:
+kubectl delete -f giropops_deployment.yaml #Por arquivo
+kubectl delete deployment -n opa giropops
+
+#Expor o deployment/Pods:
+#Criar um service:
+kubectl expose deployment -n opa giropops
+
+#Deployment manual:
+kubectl create deployment --image=nginx nginx
+
+#Escalar replicas:
+kubectl scale deployment --replicas=100

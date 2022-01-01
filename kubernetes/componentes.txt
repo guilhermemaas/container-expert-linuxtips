@@ -47,7 +47,7 @@ Camadas:
 Ingress
     Service
         Controller -> Deployment
-            Replica7
+            ReplicaSet
                 Pods
                     Container App
                     Container sidecar
