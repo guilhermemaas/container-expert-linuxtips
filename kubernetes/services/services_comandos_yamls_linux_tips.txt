@@ -1,0 +1,137 @@
+ Comandos - Services
+html
+Add-ons:
+https://kubernetes.io/docs/concepts/cluster-administration/networking/
+https://chrislovecnm.com/kubernetes/cni/choosing-a-cni-provider/
+https://kubernetes.io/docs/concepts/cluster-administration/addons/
+html
+# vim primeiro-service-clusterip.yaml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx
+  name: nginx-clusterip
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: nginx
+  sessionAffinity: None
+  type: ClusterIP
+html
+# vim primeiro-service-nodeip.yaml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx
+  name: nginx-nodeport
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 32548
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: nginx
+  sessionAffinity: ClientIP
+  type: NodePort
+html
+# vim primeiro-service-loadbalancer.yaml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx
+  name: nginx-loadbalancer
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 32548
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: nginx
+  sessionAffinity: None
+  type: LoadBalancer
+html
+# kubectl create -f primeiro-service-clusterip.yaml
+
+# kubectl create -f primeiro-service-nodeip.yaml
+
+# kubectl create -f primeiro-service-loadbalancer.yaml
+
+# kubectl edit -f primeiro-service-nodeip.yaml
+
+# kubectl get deploy nginx -o yaml > primeiro-deployment-limitado.yaml
+
+# kubectl exec -ti nginx-limitado-8d767cd5f-lg5xs -- /bin/bash
+
+# kubectl replace -f deployment_limitado.yaml
+
+# kubectl get endpoints
+
+# kubectl describe endpoints nginx-ddswrgb
+
+html
+# vim deployment-limitado.yaml
+
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-limitado
+  namespace: default
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      run: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: nginx
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 1
+          requests:
+            memory: 96Mi
+            cpu: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

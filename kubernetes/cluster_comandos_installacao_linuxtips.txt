@@ -31,6 +31,13 @@ docker info | grep -i cgroup
 WARNING: No swap limit support
 root@kubernetes3:/home/gmaas#
 
+#Desativar Swap:
+vim /etc/fstab
+#Comentar:
+#/host/ubuntu/disks/swap.disk none            swap    loop,sw         0       0
+#desativar swap:
+swapoff -a
+
 ===
 Instalação do Kubernetes (https://livro.descomplicandokubernetes.com.br/pt/day_one/descomplicando_kubernetes.html#instala%C3%A7%C3%A3o-do-microk8s-no-gnulinux):
 sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2

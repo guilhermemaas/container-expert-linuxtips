@@ -62,9 +62,27 @@ kubelet -> Agent que vai conversar com a API do master.
 kubectl -> Cli do Kubernetes.
 
 ========================================================================================================================
+Pods - namespace kube-system:
+api-server: 
+É quem tem acesso ao etcd
+É quem garante a comunicação entre os nós
+
+cube-scheduler:
+Determina onde determinado pod irá subir
+
+controller-manager:
+Controller principal, se comunica com o API Server pra determinar o estado
+dos componetnes do cluster
+
+kube-proxy:
+Gerencia a rede dos containers, exposição de portas
+
+CNI - Plugins baseados para gerenciamento de rede.
+
 
 ========================================================================================================================
-
+Services:
+    Redirecionar requisições externas pra dentro do pod.
 ========================================================================================================================
 
 ========================================================================================================================

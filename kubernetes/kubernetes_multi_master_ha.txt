@@ -1,0 +1,91 @@
+#k8s-master1: 192.168.1.100
+#k8s-master2: 192.168.1.120
+#k8s-master3: 192.168.1.121
+#haproxy: 192.168.1.122
+#k8s-worker1: 192.168.1.102
+#k8s-worker2: 192.168.1.103
+
+#kubectl = v1.23.1
+#kubelet = v1.23.1
+#kubeadm = v1.23.1
+
+###Tmux CTRL+B+Z - Alterna para o modo full screen
+####vim: yy -> copia a linha inteira, p-> cola
+
+####HAPROXY:
+
+#hostname:
+hostname k8s-haproxy-01
+echo "k8s-haproxy-01" > /etc/hostname
+
+#update apt
+apt update
+
+#apt install -y haproxy
+
+#arquivo de configuração:
+vim /etc/
+
+frontend kubernetes
+        mode tcp
+        bind 192.168.1.122:6443
+        option tcplog
+        default_backend k8s-masters
+
+backend k8s-masters
+        mode tcp
+        balance roundrobin
+        option tcp-check
+        server k8s-master-0 192.168.1.100:6443 check fall 3 rise 2
+        server k8s-master-1 192.168.1.120:6443 check fall 3 rise 2
+        server k8s-master-2 192.168.1.121:6443 check fall 3 rise 2
+
+#systemctl haproxy restart
+
+root@k8s-haproxy-01:/home/gmaas# netstat -atunp
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      751/systemd-resolve 
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1339/sshd: /usr/sbi 
+tcp        0      0 192.168.1.122:6443       0.0.0.0:*               LISTEN      3274/haproxy        
+tcp        0    176 192.168.1.122:22        192.168.1.101:52832     ESTABLISHED 3147/sshd: gmaas [p 
+tcp6       0      0 :::22                   :::*                    LISTEN      1339/sshd: /usr/sbi 
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           751/systemd-resolve 
+
+#nc -v 192.168.1.122 6443
+root@k8s-haproxy-01:/home/gmaas# nc -v 192.168.1.122 6443
+Connection to 192.168.1.122 6443 port [tcp/*] succeeded!
+
+#Instalar a versão 1.23.1:
+apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
+
+#Instalar o Docker:
+->> cluster_comandos_installacao_linuxtips
+
+#Iniciar o cluster com o endereço do balancer:
+sudo kubeadm init --control-plane-endpoint "LOAD_BALANCER_DNS:LOAD_BALANCER_PORT" --upload-certs
+
+
+You can now join any number of the control-plane node running the following command on each as root:
+
+  kubeadm join k8s-haproxy:6443 --token cclvan.3yyirtf2osc05cc0 \
+        --discovery-token-ca-cert-hash sha256:f4829e867471f31b03da60ec7c66f3c83e8928f39424ae94e31bce5119bf9f97 \
+        --control-plane --certificate-key d0396f71b5c16c488ed5fcab596e0aecd4e0dba44749963800fe81e084eadf1d
+
+Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
+As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
+"kubeadm init phase upload-certs --upload-certs" to reload certs afterward.
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join k8s-haproxy:6443 --token cclvan.3yyirtf2osc05cc0 \
+        --discovery-token-ca-cert-hash sha256:f4829e867471f31b03da60ec7c66f3c83e8928f39424ae94e31bce5119bf9f97
+
+
+#Habilitar o pod network:
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+habilitar o config do kubectl:
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config

@@ -1,0 +1,12 @@
+#listar nodes para remover:
+kubectl get nodes -o wide
+
+#Drain/remove node:
+kubectl drain kubernetes3 --delete-emptydir-data --force --ignore-daemonsets
+
+#No node: 
+kubectl reset 
+
+#No master:
+kubectl delete
+

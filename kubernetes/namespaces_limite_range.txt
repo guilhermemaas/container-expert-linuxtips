@@ -1,0 +1,9 @@
+#Exportar um namespace pra yaml:
+kubectl get namespaces tracking -o yaml > tracking_namespace.yaml
+
+#Criar um namespace com base num manifesto:
+┌─[gmaas@gmaas]─(~/.../kubernetes/day2_namespaces)(main U:3 ?:7 ✗)
+└─[18:53]-(%)-[$] kubectl create -f tracking_namespace.yaml
+namespace/tracking2 created
+
+#Limites:

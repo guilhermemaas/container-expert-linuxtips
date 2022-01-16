@@ -1,0 +1,67 @@
+Controllers:
+
+Com base no deployment:
+Replica Controllers -> Valida e controla a execucao de pods, espalhados entre os nodes.
+
+2 tipos:
+Replication Controller e o Replica Set
+
+#ReplicationController -> Descontinuado
+#ReplicaSet = Atual
+
+Quem controla o ReplicaSet? Deployment
+
+================
+###Comandos 
+Export serviço:
+kubectl run nginx --image nginx --port=80
+kubectl expose deployment nginx
+
+#Listar serviços:
+kubectl get service
+-> Nesse mometno é criado um endpoint automaticamente:
+
+#Listar endpoints:
+kubectl get endpoints
+
+┌─[gmaas@gmaas]─(~/.../kubernetes/day2)(main U:2 ?:5 ✗)
+└─[07:27]-(%)-[$] kubectl get endpoints
+NAME         ENDPOINTS                                                  AGE
+kubernetes   192.168.1.100:6443,192.168.1.120:6443,192.168.1.121:6443   14h
+nginx        10.47.0.1:80                                               5m5s
+
+#Scale
+kubectl scale --replicas=10 deployment nginx
+
+#kubectl get services -o wide
+#-o, --output='':
+
+
+###spec:
+sessionAffinity: ClientIP 
+Pelo IP de origem, manda as requisições para o mesmo Pod.
+
+#Expor para fora do cluster:
+kubectl expose deployment nginx --type=NodePort
+http://192.168.1.100:32680/
+
+Obs.: Quando é criado um NodePort, um ClusterIP vem junto no pacote.
+
+#Export LoadBalancer:
+kubectl expose deployment nginx --type=LoadBalancer
+
+┌─[gmaas@gmaas]─(~/.../kubernetes/day2)(main U:2 ?:5 ✗)
+└─[09:19]-(%)-[$] kubectl get services
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP      10.96.0.1       <none>        443/TCP        16h
+nginx        LoadBalancer   10.109.69.188   <pending>     80:30105/TCP   2m57s
+
+Obs.: Quando é criado um Load Balancer, também é criado um NodePort e Cluster IP (vem junto :3).
+
+###
+Editar um service no "quente":
+kubectl editr service nginx
+
+
+#get replicasets
+kubectl get replicasets

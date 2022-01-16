@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx #Match com label do deployment
+  template: #Isso aqui é o template no qual cada pod será criado.
+  #podendo ser adicionado imagens, recursos, ports, etc por container dentro do pod.
+    metadata:
+      labels:
+        app: nginx #Label do Container
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits: #Hard Limit, é o máximo que esse pod vai conseguir alocar de recurso
+            memory: "512Mi"
+            cpu: "500m" #Metade de um core
+          requests: #Soft Limite, é o mínimo para o pod subir
+            memory: "256Mi"
+            cpu: "250m" #1/4 de um core
+      dnsPolicy: ClusterFirst #Vai consultar DNS Interno antes de fora
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30 #Tempo que vai esperar antes de mandar um "kill -9"
