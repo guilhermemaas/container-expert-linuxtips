@@ -6,4 +6,26 @@ kubectl get namespaces tracking -o yaml > tracking_namespace.yaml
 └─[18:53]-(%)-[$] kubectl create -f tracking_namespace.yaml
 namespace/tracking2 created
 
-#Limites:
+#Limites, Limit Range:
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limitando-recursos-namespace-tracking2
+spec:
+  limits:
+  - default:
+      cpu: 1
+      memory: 100Mi
+    defaultRequest:
+      cpu: 0.5
+      memory: 80Mi
+    type: Container
+
+default -> Hard Limit
+defaultRequest -> Soft Limit
+
+#Criar o LimitRange pro namespace xpto:
+kubectl create -f namespace_tracking2_limitado.yaml -n tracking2
+
+#Visualziar um limitRange:
+kubectl get limitranges -n tracking2

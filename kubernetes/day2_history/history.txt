@@ -1,0 +1,214 @@
+kubectl get nodes
+kubectl get pods --all-namespaces
+kubectl get nodes
+kubectl describe node elliot-01
+kubectl describe node elliot-02
+source <(kubectl completion bash)
+kubectl describe nodes elliot-03
+echo "source <(kubectl completion bash)" >> /root/.bashrc
+kubectl get namespaces
+kubectl get pods -n kube-system
+kubectl get pods -n kube-system -o wide
+history
+kubectl run nginx --image nginx
+kubectl get deployments.
+kubectl get replicasets.
+kubectl get pods
+kubectl get services
+kubectl describe replicasets. nginx-7cdbd8cdc9
+kubectl describe pods nginx-7cdbd8cdc9-zzp8n
+kubectl get deployments.
+kubectl describe deployments. nginx
+kubectl get deployments.
+kubectl scale --replicas=10 deployment nginx
+kubectl get deployments.
+kubectl run nginx2 --image nginx
+kubectl get deployments.
+kubectl describe deployments. nginx
+kubectl get pods
+kubectl get deployments.
+kubectl delete deployments. nginx
+kubectl delete deployments. nginx2
+kubectl get deployments.
+kubectl run nginx --image nginx --port=80
+kubectl get deployments.
+kubectl describe pods nginx-57867cc648-q8zkj
+kubectl get deployments. nginx -o yaml
+kubectl get deployments. nginx
+kubectl get deployments. nginx -o yaml
+kubectl get deployments. nginx -o yaml > meu_primeiro_deployment.yaml
+ls
+vim meu_primeiro_deployment.yaml
+ls
+kubectl get deployments.
+kubectl create -f meu_primeiro_deployment.yaml
+kubectl get deployments.
+kubectl delete -f meu_primeiro_deployment.yaml
+vim meu_primeiro_deployment.yaml
+kubectl create -f meu_primeiro_deployment.yaml
+kubectl get deployments.
+kubectl get pods
+kubectl get deployments.
+kubectl expose deployment meu-nginx
+kubectl get services
+kubectl delete service meu-nginx
+kubectl expose deployment meu-nginx --type=NodePort
+kubectl get services
+kubectl get services
+kubectl get services -o yaml
+kubectl get services -o yaml > meu_primeiro_service.yaml
+vim meu_primeiro_service.yaml
+rm -rf meu_primeiro_service.yaml
+kubectl get services nginx -o yaml > meu_primeiro_service.yaml
+vim meu_primeiro_service.yaml
+kubectl delete service nginx
+kubectl create -f meu_primeiro_service.yaml
+kubectl get services
+kubectl delete service nginx
+vim meu_primeiro_service.yaml
+kubectl delete service nginx
+kubectl get services
+kubectl expose deployment nginx --type=NodePort
+kubectl get services
+curl 10.99.152.147
+curl http://3.90.64.138:32144/
+curl 10.99.152.147
+kubectl describe service nginx
+kubectl get services nginx -o yaml > meu_primeiro_service_nodeport.yaml
+vim meu_primeiro_service_nodeport.yaml
+kubectl create -f meu_primeiro_service_nodeport.yaml
+kubectl delete service nginx
+kubectl create -f meu_primeiro_service_nodeport.yaml
+kubectl get services
+vim meu_primeiro_service_nodeport.yaml
+history
+vim meu_primeiro_service_nodeport.yaml
+kubectl delete service nginx
+kubectl expose deployment nginx --type=LoadBalancer
+kubectl get services
+kubectl get endpoints
+kubectl get services nginx -o yaml > meu_primeiro_service_loadbalancer.yaml
+vim meu_primeiro_service_nodeport.yaml
+vim meu_primeiro_service_loadbalancer.yaml
+kubectl delete service nginx
+kubectl create -f meu_primeiro_service_loadbalancer.yaml
+kubectl get services
+kubectl get endpoints
+kubectl describe endpoints nginx
+vim meu_primeiro_deployment.yaml
+kubectl delete deployments. nginx
+kubectl create -f meu_primeiro_deployment.yaml
+kubectl delete deployments. nginx
+kubectl delete -f meu_primeiro_deployment.yaml
+kubectl delete service nginx
+cat meu_primeiro_service_nodeport.yaml
+vim meu_primeiro_deployment.yaml
+kubectl create -f meu_primeiro_deployment.yaml
+vim meu_primeiro_deployment.yaml
+cp meu_primeiro_deployment.yaml deployment_limitado.yaml
+vim deployment_limitado.yaml
+kubectl create -f deployment_limitado.yaml
+kubectl delete deployments. meu-nginx
+kubectl create -f deployment_limitado.yaml
+kubectl get deployments.
+kubectl describe deployments. meu-nginx
+kubectl create -f deployment_limitado.yaml
+kubectl replace -f deployment_limitado.yaml
+kubectl create -f meu_primeiro_service.yaml
+kubectl delete service nginx
+kubectl create -f meu_primeiro_service.yaml
+kubectl get services
+vim meu_primeiro_service.yaml
+kubectl edit service nginx
+kubectl get services
+kubectl edit service nginx
+kubectl get services
+kubectl edit deployments. meu-nginx
+kubectl get deployments.
+kubectl get replicasets.
+kubectl edit deployments. meu-nginx
+kubectl get deployments.
+kubectl edit deployments. meu-nginx
+history
+vim deployment_limitado.yaml
+kubectl get deployments.
+kubectl get pods
+kubectl get pods -o wide
+kubectl exec -ti meu-nginx-79d7766cb8-2shml -- bash
+kubectl edit deployments. meu-nginx
+kubectl delete deployments. meu-nginx
+kubectl delete service nginx
+kubectl get namespaces
+kubectl create namespace giropops
+kubectl get namespaces
+kubectl describe namespaces giropops
+kubectl get namespaces giropops -o yaml
+kubectl get namespaces giropops -o yaml > meu_primeiro_namespace.yaml
+vim meu_primeiro_namespace.yaml
+kubectl create -f meu_primeiro_namespace.yaml
+kubectl get namespaces
+vim namespace_limitado.yaml
+  history
+cat namespace_limitado.yaml
+kubectl create -f namespace_limitado.yaml -n giropops
+kubectl get limitranges
+kubectl get limitranges -n giropops
+kubectl describe limitranges -n giropops limitando-recursos
+vim pod-limitado.yaml
+vim meu_primeiro_deployment.yaml
+vim pod-limitado.yaml
+kubectl create -f pod-limitado.yaml
+kubectl delete -f pod-limitado.yaml
+kubectl delete -f pod-limitado.yaml -n giropops
+kubectl create -f pod-limitado.yaml -n giropops
+kubectl get pods
+kubectl get pods -n giropops
+kubectl describe pods -n giropops
+vim namespace_limitado.yaml
+kubectl delete -f pod-limitado.yaml
+kubectl get deployments. --all-namespaces
+kubectl describe nodes elliot-02
+kubectl describe nodes elliot-01
+kubectl create -f deployment_limitado.yaml
+kubectl get deployments. --all-namespaces
+kubectl get pods -o wide
+kubectl scale --replicas=6 deployment nginx
+kubectl scale --replicas=6 deployment meu-nginx
+kubectl get pods -o wide
+kubectl taint node  elliot-02 key1=value1:NoSchedule
+kubectl describe nodes elliot-02
+kubectl scale --replicas=10 deployment meu-nginx
+kubectl get namespaces
+kubectl get deployments.
+kubectl edit deployments. meu-nginx
+kubectl get deployments.
+kubectl get pods -o wide
+kubectl delete deployments. meu-nginx
+kubectl taint node  elliot-02 key1:NoSchedule-
+vim deployment_limitado.yaml
+kubectl create -f deployment_limitado.yaml
+kubectl get pods -o wide
+kubectl delete deployments. meu-nginx
+vim deployment_limitado.yaml
+kubectl create -f deployment_limitado.yaml
+kubectl get deployments.
+kubectl get pods -o wide
+kubectl taint node  elliot-02 key1=value1:NoSchedule
+kubectl get pods -o wide
+kubectl scale --replicas=10 deployment meu-nginx
+kubectl get pods -o wide
+kubectl delete deployments. meu-nginx
+kubectl taint node  elliot-02 key1:NoSchedule-
+kubectl create -f deployment_limitado.yaml
+kubectl get pods -o wide
+kubectl taint node  elliot-02 key1=value1:NoExecute
+kubectl get pods -o wide
+kubectl taint node  elliot-02 key1:NoExecute-
+kubectl get pods -o wide
+kubectl taint node  elliot-02 key1=value1:NoExecute
+kubectl describe nodes elliot-02
+kubectl taint node  elliot-02 key1:NoExecute-
+kubectl get pods -o wide
+kubectl scale --replicas=1 deployment meu-nginx
+kubectl scale --replicas=6 deployment meu-nginx
+kubectl get pods -o wide

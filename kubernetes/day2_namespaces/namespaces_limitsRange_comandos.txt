@@ -1,0 +1,57 @@
+Comandos - Limitando recursos
+html
+# vim limitando-recursos.yaml:
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limitando-recursos
+spec:
+  limits:
+  - default:
+      cpu: 1
+      memory: 100Mi
+    defaultRequest:
+      cpu: 0.5
+      memory: 80Mi
+    type: Container
+
+
+# vim pod-limitrange.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-limitrange
+spec:
+  containers:
+    - name: limitado-pod
+      image: nginx
+html
+# kubectl create namespace primeiro-namespace
+
+# kubectl get ns
+
+# kubectl describe primeiro-namespace
+
+# kubectl describe namespace primeiro-namespace
+
+# kubectl create -f limitando-recursos.yaml -n primeiro-namespace
+
+# kubectl get limitranges
+
+# kubectl get limitranges -n primeiro-namespace
+
+# kubectl get limitranges --all-namespace
+
+# kubectl describe limitranges -n primeiro-namespace
+
+# kubectl create -f pod-limitrange.yaml
+
+# kubectl create -f pod-limitrange.yaml -n primeiro-namespace
+
+# kubectl get pods --all-namespaces
+
+#kubectl describe pod limit-pod
+
+# kubectl describe pod limit-pod -n primeiro-namespace
