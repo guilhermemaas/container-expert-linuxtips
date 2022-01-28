@@ -1,0 +1,93 @@
+# vim primeiro-deployment.yaml
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+    app: giropops
+  name: primeiro-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+        dc: UK
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx2
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+    
+
+# kubectl create -f primeiro-deployment.yaml
+deployment.extensions/primeiro-deployment created
+html
+# vim segundo-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: segundo-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+        dc: Netherlands
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx2
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      
+
+# kubectl create -f segundo-deployment.yaml
+deployment.extensions/segundo-deployment created
+html
+# kubectl get deployment
+
+# kubectl get pods
+
+# kubectl describe pod primeiro-deployment-68c9dbf8b8-kjqpt
+
+# kubectl describe pod segundo-deployment-59db86c584-cf9pp
+
+# kubectl describe deployment primeiro-deployment
+
+# kubectl describe deployment segundo-deployment
+
+

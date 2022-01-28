@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: day3-nginx
+    app: day3-giropops
+  name: day3-deployment2
+  namespace: day3-k8s
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      run: day3-nginx
+  template:
+    metadata:
+      labels:
+        run: day3-nginx 
+        dc: RJ
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: day3-nginx-container
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+
