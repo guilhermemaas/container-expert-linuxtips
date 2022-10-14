@@ -91,3 +91,20 @@ html
 # kubectl describe deployment segundo-deployment
 
 
+###labels
+
+➜  day3_deployment_replicaset_daemonset_canary_rollout_rollback git:(main) ✗ kubectl kubectl get pods -l dc=UK -n day3-k8s
+error: unknown command "kubectl" for "kubectl"
+➜  day3_deployment_replicaset_daemonset_canary_rollout_rollback git:(main) ✗ kubectl get pods -l dc=UK -n day3-k8s
+NAME                               READY   STATUS    RESTARTS   AGE
+day3-deployment-57b579f4cd-2l64h   1/1     Running   0          74m
+➜  day3_deployment_replicaset_daemonset_canary_rollout_rollback git:(main) ✗ kubectl get pods -L dc=UK -n day3-k8s
+NAME                                READY   STATUS    RESTARTS   AGE   DC=UK
+day3-deployment2-6cdfcc6d78-klf2r   1/1     Running   0          74m
+day3-deployment-57b579f4cd-2l64h    1/1     Running   0          74m
+➜  day3_deployment_replicaset_daemonset_canary_rollout_rollback git:(main) ✗ kubectl get pods -L dc -n day3-k8s
+NAME                                READY   STATUS    RESTARTS   AGE   DC
+day3-deployment2-6cdfcc6d78-klf2r   1/1     Running   0          74m   RJ
+day3-deployment-57b579f4cd-2l64h    1/1     Running   0          74m   UK]
+
+
