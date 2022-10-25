@@ -1,0 +1,110 @@
+2 tipos de volumes:
+    - Empty -> Inicia junto com o pod.
+    - Todos os containers do pod tem acesso.
+    - Não tem persistência.
+
+Yaml para create:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    name: busy
+    command:
+      - sleep
+      - "3600"
+    volumeMounts:
+    - mountPath: /giropops
+      name: giropops-dir
+  volumes:
+  - name: giropops-dir
+    emptyDir: {}
+
+
+#Para entrar no container com exec:
+kubectl exec -ti busybox -- sh
+
+# Listar todos os pods
+kubectl get pods -o wide
+
+#Como ver onde no disco está o arquivo criado dentro do mount no container
+root@ubuntu1:/var/lib/kubelet/pods/120d7b9e-c62f-43a1-9975-d71f2375633d/plugins/kubernetes.io~empty-dir/giropops-dir# cd -
+/var/lib/kubelet/pods
+root@ubuntu1:/var/lib/kubelet/pods# ls
+120d7b9e-c62f-43a1-9975-d71f2375633d  4e495ec3-3b02-4a63-8447-d8d0caaaf189  8d2c5a67-1969-48dd-80fe-a33bb1305cd8
+2b54d0e8-a6ca-48a5-aa8d-fa6551c25952  87a0996a-b7a2-48e5-ae11-6675bda98f19  8d968654-5942-4ff3-851c-f5e8539db66d
+root@ubuntu1:/var/lib/kubelet/pods# find . -iname "giropops-dir"
+./120d7b9e-c62f-43a1-9975-d71f2375633d/plugins/kubernetes.io~empty-dir/giropops-dir
+./120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir
+root@ubuntu1:/var/lib/kubelet/pods# cd ./120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir
+root@ubuntu1:/var/lib/kubelet/pods/120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir# 
+root@ubuntu1:/var/lib/kubelet/pods/120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir# 
+root@ubuntu1:/var/lib/kubelet/pods/120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir# 
+root@ubuntu1:/var/lib/kubelet/pods/120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir# ls
+teste.txt
+root@ubuntu1:/var/lib/kubelet/pods/120d7b9e-c62f-43a1-9975-d71f2375633d/volumes/kubernetes.io~empty-dir/giropops-dir# 
+
+
+####################################################
+PV e PVC
+Persistent Volume e Persistent Volume Claim
+###################################################
+
+ubuntu1: 192.168.1.100
+ubuntu2: 192.168.1.101
+ubuntu3: 192.168.1.102
+
+
+Exemplo com NFS em um cluster em 3 vms ubuntu:
+ubuntu1:
+apt install nfs-kernel-server 
+
+ubuntu2 e ubuntu3:
+apt install nfs-common
+
+COMANDOS:
+ubuntu1:
+mkdir /opt/dados
+chmod 1777 /opt/dados
+vim /etc/exports (Arquivo onde é informado o que vai ser copartilhado)
+    /opt/dados *(rw, sync, no_root_squash, subtree_check)
+    ---> * = Todos. Poderia ser uma subrede, ou um IP.
+    ---> no_root_squash, não exige root
+exportfs -ar
+    ---> Exporta os arquivos
+
+ubuntu2 e 3:
+showmount -e 192.168.1.100 (Verifica o compartilhamento do server alvo)
+
+YAML PV:
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: primeiro-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany -> Leitura e escrita para varios nodes
+  #- ReadWriteOnce -> Leitura e escrita para um unico node
+  #- ReadOnlyMany -> Somente leitura para varios nodes
+  persistentVolumeReclaimPolicy: Retain
+  #persistentVolumeReclaimPolicy: Delete, Recycle
+  #Com retain, se reomover a Policy, mantem os arquivos
+  nfs:
+    path: /opt/dados
+    server: 192.168.1.100
+    readOnly: false
+
+Comando para criar:
+kubectl create -f primeiro-pv.yml
+
+Listar e ver se está disponível (available).
+kubectl get pv
+
+
+YAML PVC
