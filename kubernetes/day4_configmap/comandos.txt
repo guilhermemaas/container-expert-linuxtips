@@ -1,0 +1,69 @@
+ ConfigMaps - Comandos
+HTML
+# mkdir frutas
+
+# echo amarela > frutas/banana
+
+# echo vermelho > frutas/morango
+
+# echo verde > frutas/limao
+
+# echo "verde e vermelha" > frutas/melancia
+
+# echo kiwi > predileta
+
+# git clone https://bitbucket.org/gcalcette/book-descomplicando-k8s.git
+
+# kubectl create configmap cores-frutas --from-literal=uva=roxa --from-file=predileta --from-file=frutas/
+
+# kubectl get configmap
+
+HTML
+# vim pod-configmap.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-configmap
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    name: busy-configmap
+    command:
+      - sleep
+      - "3600"
+    env:
+    - name: frutas
+      valueFrom:
+        configMapKeyRef:
+          name: cores-frutas
+          key: predileta
+#    envFrom:
+#    - configMapRef:
+#        name: cores-frutas
+HTML
+# kubectl create -f pod-configmap.yaml
+HTML
+# cat pod-configmap-file.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-configmap-file
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    name: busy-configmap
+    command:
+      - sleep
+      - "3600"
+    volumeMounts:
+    - name: meu-configmap-vol
+      mountPath: /etc/frutas
+  volumes:
+  - name: meu-configmap-vol
+    configMap:
+      name: cores-frutas
+HTML
+# kubectl create -f pod-configmap-file.yaml
+HTML

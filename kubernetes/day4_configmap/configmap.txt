@@ -1,0 +1,50 @@
+➜  day4_configmap git:(main)
+➜  day4_configmap git:(main) mkdir teste-configs 
+➜  day4_configmap git:(main) mkdir teste-configs/postgresql.conf
+➜  day4_configmap git:(main) rm -rf teste-configs/postgresql.conf 
+➜  day4_configmap git:(main) echo "POSTGRES" > teste-configs/postgresql.conf
+➜  day4_configmap git:(main) ✗ echo "MYSQL" > teste-configs/mysql.conf
+➜  day4_configmap git:(main) ✗ echo "SQL SERVER" > teste-configs/sqlserver.conf
+➜  day4_configmap git:(main) ✗ echo "MONGODB" > teste-configs/mongodb.conf
+➜  day4_configmap git:(main) ✗ kubectl create configmap config-dbs --from-literal oracle.conf=ORACLE --from-file=teste-configs/
+configmap/config-dbs created
+➜  day4_configmap git:(main) ✗ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      59d
+config-dbs         5      10s
+➜  day4_configmap git:(main) ✗ kubectl describe config-dbs
+error: the server doesn't have a resource type "config-dbs"
+➜  day4_configmap git:(main) ✗ kubectl describe configmap config-dbs
+Name:         config-dbs
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+mongodb.conf:
+----
+MONGODB
+
+mysql.conf:
+----
+MYSQL
+
+oracle.conf:
+----
+ORACLE
+postgresql.conf:
+----
+POSTGRES
+
+sqlserver.conf:
+----
+SQL SERVER
+
+
+BinaryData
+====
+
+Events:  <none>
+➜  day4_configmap git:(main) ✗
+
