@@ -1,0 +1,75 @@
+  Secrets - Comandos
+HTML
+# echo -n "descomplicando-k8s" > secret.txt
+
+# kubectl create secret generic my-secret --from-file=secret.txt
+
+# kubectl describe secret my-secret
+
+# kubectl get secret
+
+# kubectl get secret my-secret -o yaml
+
+# echo 'ZGVzY29tcGxpY2FuZG8tazhz' | base64 --decode
+
+HTML
+# vim pod-secret.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: teste-secret
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    name: busy
+    command:
+      - sleep
+      - "3600"
+    volumeMounts:
+    - mountPath: /tmp/giropops
+      name: my-volume-secret
+  volumes:
+  - name: my-volume-secret
+    secret:
+      secretName: my-secret
+HTML
+# kubectl create -f pod-secret.yaml
+
+# kubectl exec -ti teste-secret -- ls /tmp/giropops
+
+# kubectl exec -ti teste-secret -- cat /tmp/giropops/secret.txt
+
+# kubectl create secret generic my-literal-secret --from-literal user=linuxtips --from-literal password=catota
+
+# kubectl describe secret my-literal-secret
+
+HTML
+# vim pod-secret-env.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: teste-secret-env
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    name: busy-secret-env
+    command:
+      - sleep
+      - "3600"
+    env:
+    - name: MEU_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: my-literal-secret
+          key: user
+    - name: MEU_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-literal-secret
+          key: password
+HTML
+# kubectl create -f pod-secret-env.yaml
+
+# kubectl exec teste-secret-env -c busy-secret-env -it -- printenv
