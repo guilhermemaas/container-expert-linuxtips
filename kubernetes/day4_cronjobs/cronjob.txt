@@ -1,0 +1,34 @@
+YAML:
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: giropops-cron
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: giropops-cron
+            image: busybox
+            args:
+            - /bin/sh
+            - -c
+            - date; echo Bem Vindo ao Descomplicando Kubernetes - LinuxTips VAIII; sleep 30
+          restartPolicy: OnFailure
+
+minutos hora dia mes dia-da-semana commando
+*/1 -> A cada minuto
+10 8 * * 1-5 comando -> Rodar de segunda a sexta, 08h 10m.
+*/1 1,2 1-10 * * comando -> Rodar a cada um minuto, durante a hora 1 e 2, do dia 1 ao dia 10 do m"es.
+
+
+➜  day4_cronjobs git:(main) ✗ kubectl get cronjobs
+NAME            SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+giropops-cron   */1 * * * *   False     1        18s             86s
+
+➜  day4_cronjobs git:(main) ✗ kubectl get jobs
+NAME                     COMPLETIONS   DURATION   AGE
+giropops-cron-27779927   1/1           39s        110s
+giropops-cron-27779928   1/1           35s        50s

@@ -1,0 +1,38 @@
+# vim primeiro-cron.yaml
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: giropops-cron
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: giropops-cron
+            image: busybox
+            args:
+            - /bin/sh
+            - -c
+            - date; echo Bem Vindo ao Descomplicando Kubernetes - LinuxTips VAIIII ;sleep 30
+          restartPolicy: OnFailure
+
+HTML
+# kubectl create -f primeiro-cron.yaml
+
+# kubectl get cronjobs
+
+# kubectl describe cronjobs.batch giropops-cron
+
+# kubectl get jobs --watch
+
+# kubectl get cronjob giropops-cron
+
+# kubectl get pods
+
+#kubectl  logs giropops-cron-1534979940-vcwdg
+
+# kubectl get pods
+
+# kubectl delete cronjob giropops-cron

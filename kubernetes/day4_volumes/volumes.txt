@@ -107,4 +107,7 @@ Listar e ver se está disponível (available).
 kubectl get pv
 
 
-YAML PVC
+Editar o pv ou pvc:
+kubectl edit pv primeiro-pv ou primeiro-pvc
+
+Alterar a persistentVolumeReclaimPolicy para delete por exemplo, quando o container do pod morrer o arquivo vai junto.
