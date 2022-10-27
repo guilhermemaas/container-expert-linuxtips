@@ -1,0 +1,35 @@
+kubectl create serviceaccount gmaas
+kubectl get serviceaccount gmaas
+
+listar cluster roles:
+kubectl get clusterroles
+
+listar permissoes de uma cluster role:
+➜  day4_rbac git:(main) ✗ kubectl describe clusterrole cluster-admin
+Name:         cluster-admin
+Labels:       kubernetes.io/bootstrapping=rbac-defaults
+Annotations:  rbac.authorization.kubernetes.io/autoupdate: true
+PolicyRule:
+  Resources  Non-Resource URLs  Resource Names  Verbs
+  ---------  -----------------  --------------  -----
+  *.*        []                 []              [*]
+             [*]                []              [*]
+➜  day4_rbac git:(main) ✗
+
+--- Cluster role binding -> Associar um clusterrole a um usuário:
+kubectl create clusterrolebinding giropops --serviceaccount=default:gmaas --clusterrole=cluster-admin
+
+kubectl get clusterrolebinding.rbac.authorization.k8s.io/giropops
+kubectl get clusterrolebinding
+
+➜  day4_rbac git:(main) ✗ kubectl describe clusterrolebindings.rbac.authorization.k8s.io admin-user
+Name:         admin-user
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  ClusterRole
+  Name:  cluster-admin
+Subjects:
+  Kind            Name        Namespace
+  ----            ----        ---------
+  ServiceAccount  admin-user  kube-system

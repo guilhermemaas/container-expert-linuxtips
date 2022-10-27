@@ -1,0 +1,38 @@
+  InitContainers - Comandos
+HTML
+# vim nginx-initcontainer.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-demo
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: workdir
+      mountPath: /usr/share/nginx/html
+  initContainers:
+  - name: install
+    image: busybox
+    command:
+    - wget
+    - "-O"
+    - "/work-dir/index.html"
+    - http://kubernetes.io
+    volumeMounts:
+    - name: workdir
+      mountPath: "/work-dir"
+  dnsPolicy: Default
+  volumes:
+  - name: workdir
+    emptyDir: {}
+
+HTML
+# kubectl create -f nginx-initcontainer.yaml
+
+# kubectl exec -ti init-demo -- cat /usr/share/nginx/html/index.html
+
+# kubectl describe pod init-demo
